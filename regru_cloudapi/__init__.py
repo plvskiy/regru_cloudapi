@@ -1,5 +1,6 @@
-import requests
 import json
+
+import requests
 
 
 class CloudAPI(object):
@@ -7,7 +8,23 @@ class CloudAPI(object):
     def __init__(self, token):
         self.token = token
         self.api_url = 'https://api.cloudvps.reg.ru/v1'
-        self.HEADERS = {'Authorization': 'Bearer {}'.format(self.token), 'Content-Type': 'application/json'}
+        self.HEADERS = {'Authorization': f'Bearer {self.token}',
+                        'Content-Type': 'application/json'}
+
+    def get_tariffs(self):
+        data = requests.get(f'{self.api_url}/sizes', headers=self.HEADERS).json()
+
+        return data
+
+    def get_prices(self):
+        data = requests.get(f'{self.api_url}/prices', headers=self.HEADERS).json()
+
+        return data
+
+    def get_balance_data(self):
+        data = requests.get(f'{self.api_url}/balance_data', headers=self.HEADERS).json()
+
+        return data
 
     def images(self, param_type):
         params = ['distribution', 'application', 'snapshot', 'backup']
@@ -35,13 +52,13 @@ class CloudAPI(object):
     def rename_ssh_key(self, name, key_id):
         DATA = {'name': name}
         data = requests.put('{}/account/keys/{}'.format(self.api_url, key_id),
-                             headers=self.HEADERS, data=json.dumps(DATA)).json()
+                            headers=self.HEADERS, data=json.dumps(DATA)).json()
 
         return data
 
     def delete_ssh_key(self, key_id):
         data = requests.delete('{}/account/keys/{}'.format(self.api_url, key_id),
-                            headers=self.HEADERS)
+                               headers=self.HEADERS)
         if data.status_code == 204:
             return True
         else:
@@ -108,7 +125,7 @@ class CloudAPI(object):
 
     def delete_reglet(self, reglet_id):
         data = requests.delete('{}/reglets/{}'.format(self.api_url, reglet_id),
-                            headers=self.HEADERS).json()
+                               headers=self.HEADERS).json()
 
         if data.status_code == 204:
             return True
