@@ -183,7 +183,7 @@ class CloudAPI(object):
             return 'Error'
 
     def action(self, id):
-        data = requests.post('{}/actions/{}'.format(self.api_url, id), headers=self.HEADERS).json()
+        data = requests.get('{}/actions/{}'.format(self.api_url, id), headers=self.HEADERS).json()
 
         return data
 
