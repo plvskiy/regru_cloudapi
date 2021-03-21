@@ -2,7 +2,7 @@
 
 ![PyPI](https://img.shields.io/pypi/v/regru_cloudapi?style=plastic)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/regru_cloudapi)
-![PyPI - License](https://img.shields.io/pypi/l/regru_cloudapi)
+![GitHub](https://img.shields.io/github/license/plvskiy/regru_cloudapi)
 
 
 <p align="center"> Неофициальная библиотека для работы с API услуги <a href="https://reg.ru">Reg.ru</a> Облачные VPS.
