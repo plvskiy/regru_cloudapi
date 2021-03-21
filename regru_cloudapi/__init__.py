@@ -1,15 +1,17 @@
 import json
-
 import requests
+from regru_cloudapi.utils import Errors
 
 
 class CloudAPI(object):
 
-    def __init__(self, token):
+    def __init__(self, token=None):
         self.token = token
         self.api_url = 'https://api.cloudvps.reg.ru/v1'
-        self.HEADERS = {'Authorization': f'Bearer {self.token}',
-                        'Content-Type': 'application/json'}
+        self.HEADERS = {'Content-Type': 'application/json'}
+
+        if self.token is not None:
+            self.HEADERS['Authorization'] = f'Bearer {self.token}'
 
     def get_tariffs(self):
         data = requests.get(f'{self.api_url}/sizes', headers=self.HEADERS).json()
@@ -23,212 +25,267 @@ class CloudAPI(object):
 
     def get_balance_data(self):
         data = requests.get(f'{self.api_url}/balance_data', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
 
-        return data
+        return check_data
 
     def images(self, param_type):
-        params = ['distribution', 'application', 'snapshot', 'backup']
-        if param_type in params:
-            PARAMS = {'type': param_type}
-            data = requests.get('{}/images'.format(self.api_url), headers=self.HEADERS, params=PARAMS).json()
+        Errors(parameter=param_type).check_images()
 
-            return data
-        else:
-            return 'Error: Invalid type'
+        params = {'type': param_type}
+
+        data = requests.get(f'{self.api_url}/images', headers=self.HEADERS, params=params).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
 
     def get_ssh_keys(self):
-        data = requests.get('{}/account/keys'.format(self.api_url), headers=self.HEADERS).json()
+        data = requests.get(f'{self.api_url}/account/keys', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
 
-        return data
+        return check_data
 
     def add_ssh_key(self, name, pkey):
-        DATA = {'name': name,
-                'public_key': pkey}
-        data = requests.post('{}/account/keys'.format(self.api_url),
-                             headers=self.HEADERS, data=json.dumps(DATA)).json()
+        data_params = {'name': name,
+                       'public_key': pkey}
 
-        return data
+        data = requests.post(f'{self.api_url}/account/keys',
+                             headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_ssh_key()
+
+        return check_data
 
     def rename_ssh_key(self, name, key_id):
-        DATA = {'name': name}
-        data = requests.put('{}/account/keys/{}'.format(self.api_url, key_id),
-                            headers=self.HEADERS, data=json.dumps(DATA)).json()
+        data_params = {'name': name}
 
-        return data
+        data = requests.put(f'{self.api_url}/account/keys/{key_id}',
+                            headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_ssh_key()
+
+        return check_data
 
     def delete_ssh_key(self, key_id):
-        data = requests.delete('{}/account/keys/{}'.format(self.api_url, key_id),
+        data = requests.delete(f'{self.api_url}/account/keys/{key_id}',
                                headers=self.HEADERS)
-        if data.status_code == 204:
-            return True
+
+        if data.status_code != 204:
+            check_data = Errors(data.json()).check_ssh_key()
+
+            return check_data
         else:
-            return 'Error'
+            return True
 
-    def ptr(self, url, ip_vps):
-        DATA = {'ptr': url}
-        data = requests.put('{}/ips/{}'.format(self.api_url, ip_vps),
-                            headers=self.HEADERS, data=json.dumps(DATA)).json()
+    def ptr(self, domain, ip):
+        data_params = {'ptr': domain}
 
-        return data
+        data = requests.put(f'{self.api_url}/ips/{ip}',
+                            headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
 
     def get_reglets(self):
-        data = requests.get('{}/reglets'.format(self.api_url), headers=self.HEADERS).json()
-        return data
+        data = requests.get(f'{self.api_url}/reglets', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
 
     def create_reglet(self, size, image, name=None, ssh_keys=None, backups=None):
-        DATA = {'size': size,
-                'image': image}
+        data_params = {'size': size,
+                       'image': image}
 
         if name is not None:
-            DATA['name'] = name
+            data_params['name'] = name
 
         if ssh_keys is not None:
-            DATA['ssh_keys'] = ssh_keys
+            data_params['ssh_keys'] = ssh_keys
 
         if backups is not None:
-            DATA['backups'] = backups
+            data_params['backups'] = backups
 
-        data = requests.post('{}/reglets'.format(self.api_url),
-                             headers=self.HEADERS, data=json.dumps(DATA)).json()
+        data = requests.post(f'{self.api_url}/reglets',
+                             headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
 
-        return data
+        return check_data
 
     def actions(self, reglet_id, action, size=None, image=None, offline=None, name=None):
-        params = ['reboot', 'password_reset', 'start', 'stop', 'enable_backups']
-        if action in params:
-            DATA = {'type': action}
-        elif action == 'resize':
-            DATA = {'type': action,
-                    'size': size}
-        elif action == 'rebuild':
-            DATA = {'type': action,
-                    'image': image}
+        Errors(parameter=action).check_actions()
+
+        data_params = {'type': action}
+
+        if action == 'resize':
+            if size is not None:
+                data_params['size'] = size
+            else:
+                raise ValueError('Значение size не может быть None')
+        elif action == 'rebuild' or action == 'restore':
+            if image is not None:
+                data_params['image'] = image
+            else:
+                raise ValueError('Значение image не может быть None')
         elif action == 'clone' or action == 'snapshot':
-            DATA = {'type': action,
-                    'offline': offline,
-                    'name': name}
-        elif action == 'restore':
-            DATA = {'type': action,
-                    'image': image}
+            if offline is not None:
+                data_params['offline'] = offline
 
-        data = requests.post('{}/reglets/{}/actions'.format(self.api_url, reglet_id),
-                             headers=self.HEADERS, data=json.dumps(DATA)).json()
+            if name is not None:
+                data_params['name'] = name
 
-        return data
+        data = requests.post(f'{self.api_url}/reglets/{reglet_id}/actions',
+                             headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
 
-    def rename_reglet(self, name, reglet_id):
-        DATA = {'name': name}
-        data = requests.put('{}/reglets/{}'.format(self.api_url, reglet_id),
-                            headers=self.HEADERS, data=json.dumps(DATA)).json()
+        return check_data
 
-        return data
+    def rename_reglet(self, reglet_id, name):
+        if name is not None:
+            data_params = {'name': name}
+        else:
+            raise ValueError('Переменная name не может быть None')
+
+        data = requests.put(f'{self.api_url}/reglets/{reglet_id}',
+                            headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
 
     def delete_reglet(self, reglet_id):
-        data = requests.delete('{}/reglets/{}'.format(self.api_url, reglet_id),
-                               headers=self.HEADERS).json()
+        data = requests.delete(f'{self.api_url}/reglets/{reglet_id}',
+                               headers=self.HEADERS)
 
-        if data.status_code == 204:
-            return True
+        if data.status_code != 204:
+            check_data = Errors(data.json()).check_error()
+
+            return check_data
         else:
-            return 'Error'
+            return True
 
     def get_snapshots(self):
-        data = requests.get('{}/snapshots'.format(self.api_url), headers=self.HEADERS).json()
+        data = requests.get(f'{self.api_url}/snapshots', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
 
-        return data
-
-    def create_snapshot(self):
-        data = requests.post('{}/snapshots'.format(self.api_url), headers=self.HEADERS).json()
-
-        return data
+        return check_data
 
     def delete_snapshot(self, snap_id):
-        data = requests.delete('{}/snapshots/{}'.format(self.api_url, snap_id), headers=self.HEADERS).json()
+        data = requests.delete(f'{self.api_url}/snapshots/{snap_id}', headers=self.HEADERS)
 
-        if data.status_code == 204:
-            return True
+        if data.status_code != 204:
+            check_data = Errors(data.json()).check_error()
+
+            return check_data
         else:
-            return 'Error'
+            return True
 
     def get_additional_ips(self, reglet_id=None, ip=None):
-        if reglet_id is None or ip is None:
-            data = requests.get('{}/ips'.format(self.api_url), headers=self.HEADERS).json()
-        elif reglet_id is not None and ip is None:
-            PARAMS = {'reglet_id': reglet_id}
-            data = requests.get('{}/ips'.format(self.api_url), headers=self.HEADERS, params=PARAMS).json()
-        elif ip is not None and reglet_id is None:
-            data = requests.get('{}/ips/{}'.format(self.api_url, ip), headers=self.HEADERS).json()
+        params = {}
 
-        return data
+        if reglet_id is not None:
+            params['reglet_id'] = reglet_id
+
+        if ip is None:
+            data = requests.get(f'{self.api_url}/ips', headers=self.HEADERS, params=params).json()
+        else:
+            data = requests.get(f'{self.api_url}/ips/{ip}', headers=self.HEADERS).json()
+
+        check_data = Errors(data).check_error()
+
+        return check_data
 
     def add_additional_ips(self, reglet_id, ipv4_count=None, ipv6_count=None):
-        DATA = {'reglet_id': reglet_id}
-        if ipv4_count is not None or ipv6_count is not None:
-            if ipv4_count is not None:
-                DATA['ipv4_count'] = ipv4_count
-            elif ipv6_count is not None:
-                DATA['ipv6_count'] = ipv6_count
+        data_params = {}
 
-            data = requests.put('{}/ips'.format(self.api_url, reglet_id),
-                                headers=self.HEADERS, data=json.dumps(DATA)).json()
+        if ipv4_count is not None:
+            data_params['ipv4_count'] = ipv4_count
+        elif ipv6_count is not None:
+            data_params['ipv6_count'] = ipv6_count
 
-        return data
+        if data_params is not None:
+            data_params['reglet_id'] = reglet_id
+
+            data = requests.post(f'{self.api_url}/ips', headers=self.HEADERS, data=json.dumps(data_params)).json()
+            check_data = Errors(data).check_error()
+
+            return check_data
+        else:
+            raise ValueError('Не указан ни один из параметров - ipv4_count, ipv6_count')
 
     def delete_additional_ips(self, ip):
-        data = requests.delete('{}/ips/{}'.format(self.api_url, ip), headers=self.HEADERS).json()
+        if ip is not None:
+            data = requests.delete(f'{self.api_url}/ips/{ip}', headers=self.HEADERS)
+
+            if data.status_code == 204:
+                return True
+            else:
+                check_data = Errors(data.json()).check_error()
+                return check_data
+        else:
+            raise ValueError('Переменная ip не может быть None')
+
+    def get_info_action(self, action_id):
+        data = requests.get(f'{self.api_url}/actions/{action_id}', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
+
+    def get_vpcs(self):
+        data = requests.get(f'{self.api_url}/vpcs', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
+
+    def get_vpcs_info(self, vpcs_id):
+        data = requests.get(f'{self.api_url}/vpcs/{vpcs_id}', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
+
+    def add_vpcs(self, name):
+        data_params = {'name': name}
+
+        data = requests.post(f'{self.api_url}/vpcs', headers=self.HEADERS,
+                             data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
+
+    def rename_vpcs(self, vpcs_id, name):
+        data_params = {'name': name}
+
+        data = requests.put(f'{self.api_url}/vpcs/{vpcs_id}',
+                            headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
+
+        return check_data
+
+    def delete_vpcs(self, vpcs_id):
+        data = requests.delete(f'{self.api_url}/vpcs/{vpcs_id}', headers=self.HEADERS)
 
         if data.status_code == 204:
             return True
         else:
-            return 'Error'
-
-    def action(self, id):
-        data = requests.get('{}/actions/{}'.format(self.api_url, id), headers=self.HEADERS).json()
-
-        return data
-
-    def get_vpcs(self):
-        data = requests.get('{}/vpcs'.format(self.api_url), headers=self.HEADERS).json()
-
-        return data
-
-    def get_vpcs_info(self, vpcs_id):
-        data = requests.get('{}/vpcs/{}'.format(self.api_url, vpcs_id), headers=self.HEADERS).json()
-
-        return data
-
-    def add_vpcs(self, name):
-        DATA = {'name': name}
-        data = requests.post('{}/vpcs'.format(self.api_url), headers=self.HEADERS, data=json.dumps(DATA)).json()
-
-        return data
-
-    def rename_vpcs(self, name, vpcs_id):
-        DATA = {'name': name}
-        data = requests.put('{}/vpcs/{}'.format(self.api_url, vpcs_id),
-                            headers=self.HEADERS, data=json.dumps(DATA)).json()
-
-        return data
-
-    def delete_vpcs(self, vpcs_id):
-        data = requests.delete('{}/vpcs/{}'.format(self.api_url, vpcs_id), headers=self.HEADERS).json()
-
-        return data
+            check_data = Errors(data.json()).check_error()
+            return check_data
 
     def get_vpcs_members(self, vpcs_id):
-        data = requests.get('{}/vpcs/{}/members'.format(self.api_url, vpcs_id), headers=self.HEADERS).json()
+        data = requests.get(f'{self.api_url}/vpcs/{vpcs_id}/members', headers=self.HEADERS).json()
+        check_data = Errors(data).check_error()
 
-        return data
+        return check_data
 
     def join_vpcs_member(self, reglet_id, vpcs_id):
-        DATA = {'resource_id': reglet_id}
-        data = requests.post('{}/vpcs/{}/members'.format(self.api_url, vpcs_id),
-                             headers=self.HEADERS, data=json.dumps(DATA)).json()
+        data_params = {'resource_id': reglet_id}
 
-        return data
+        data = requests.post(f'{self.api_url}/vpcs/{vpcs_id}/members',
+                             headers=self.HEADERS, data=json.dumps(data_params)).json()
+        check_data = Errors(data).check_error()
 
-    def disconnect_vpcs_member(self, vpcs_id, reglet_id):
-        data = requests.delete('{}/vpcs/{}/members/{}'.format(self.api_url, vpcs_id, reglet_id),
-                               headers=self.HEADERS).json()
+        return check_data
 
-        return data
+    def disconnect_vpcs_member(self, reglet_id, vpcs_id):
+        data = requests.delete(f'{self.api_url}/vpcs/{vpcs_id}/members/{reglet_id}', headers=self.HEADERS)
+
+        if data.status_code == 204:
+            return True
+        else:
+            check_data = Errors(data.json()).check_error()
+            return check_data
