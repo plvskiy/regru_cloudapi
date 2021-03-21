@@ -22,7 +22,11 @@ setup(
     packages=find_packages(),
     python_requires='>=3.6',
     long_description=read('README.md'),
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
+    license='MIT',
+
+    classifiers=['Programming Language :: Python :: 3',
+                 'License :: OSI Approved :: MIT License']
 )
 
-classifiers = ['Programming Language :: Python :: 3']
+
