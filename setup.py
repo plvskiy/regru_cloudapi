@@ -9,17 +9,12 @@ def read(filename):
         return file.read()
 
 
-about = {}
-with open(os.path.join(here, 'regru_cloudapi', '__version__.py'), 'r') as f:
-    exec(f.read(), about)
-
-
 setup(
-    name=about['__title__'],
-    description=about['__description__'],
-    version=about['__version__'],
-    url=about['__url__'],
-    author=about['__author__'],
+    name='regru_cloudapi',
+    description='Reg.ru CloudAPI Python library',
+    version='1.2.4',
+    url='https://github.com/plvskiy/regru_cloudapi',
+    author='Matthew Polovskiy',
     packages=find_packages(),
     python_requires='>=3.6',
     long_description=read('README.md'),
