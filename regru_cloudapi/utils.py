@@ -11,6 +11,8 @@ class Errors(object):
         elif 'action' in self.data:
             if self.data['action'] is None:
                 raise KeyError('Задание с таким id не найдено')
+            else:
+                return self.data
         elif 'detail' in self.data:
             detail = self.data['detail']
 
