@@ -1026,7 +1026,7 @@ True
 
 ## Снэпшоты <a name="snapshots"></a>
 
-* [Просмотр списка снэпшотов](#get_snapshots) 0 
+* [Просмотр списка снэпшотов](#get_snapshots)
 * [Создание снэпшота](#snapshot)
 * [Создание сервера из снэпшота](#create_reglet_snapshot)
 * [Переустановка сервера из снэпшота](#rebuild_snapshot)
