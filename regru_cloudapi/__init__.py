@@ -160,6 +160,23 @@ class CloudAPI(object):
         else:
             return True
 
+    def get_removed_reglets(self):
+        data = requests.get(f'{self.api_url}/removed_servers', headers=self.HEADERS).json()
+
+        return data
+
+    def restore_reglet(self, service_id, name, image, size, backups, ssh_keys):
+        JSON = {"service_id": int(service_id),
+                "name": str(name),
+                "image": int(image),
+                "size": str(size),
+                "backups": backups,
+                "ssh_keys": ssh_keys}
+
+        data = requests.post(f'{self.api_url}/reglets', headers=self.HEADERS, json=JSON).json()
+
+        return data
+
     def get_snapshots(self):
         data = requests.get(f'{self.api_url}/snapshots', headers=self.HEADERS).json()
         check_data = Errors(data).check_error()
