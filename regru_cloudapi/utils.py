@@ -71,12 +71,10 @@ class Errors(object):
 
     def check_actions(self):
         params = ['reboot', 'password_reset', 'start', 'stop', 'enable_backups', 'disable_backups', 'resize',
-                  'rebuild', 'restore', 'clone', 'snapshot']
+                  'rebuild', 'restore', 'clone', 'snapshot', 'generate_vnc_link']
 
         if self.parameter not in params:
-            raise KeyError('Такой тип операции отсутстсвует. Используй одно из значений: '
-                           'reboot, password_reset, start, stop, enable_backups, disable_backups, resize,'
-                           'rebuild, restore, clone, snapshot')
+            raise KeyError(f'Такой тип операции отсутствует. Используй одно из значений: {*params, }')
 
     def check_ssh_key(self):
         if 'detail' in self.data:

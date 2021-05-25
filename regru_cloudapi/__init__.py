@@ -165,6 +165,13 @@ class CloudAPI(object):
 
         return data
 
+    def get_vnc_url(self, reglet_id):
+        CloudAPI(self.token).actions(reglet_id, 'generate_vnc_link')
+
+        data = requests.get(f'{self.api_url}/reglets/{reglet_id}/vnc_link', headers=self.HEADERS).json()
+
+        return data
+
     def get_snapshots(self):
         data = requests.get(f'{self.api_url}/snapshots', headers=self.HEADERS).json()
         check_data = Errors(data).check_error()

@@ -12,7 +12,7 @@ def read(filename):
 setup(
     name='regru_cloudapi',
     description='Reg.ru CloudAPI Python library',
-    version='1.2.8',
+    version='1.2.9',
     url='https://github.com/plvskiy/regru_cloudapi',
     author='Matthew Polovskiy',
     packages=find_packages(),

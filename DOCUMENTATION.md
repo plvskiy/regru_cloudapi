@@ -32,6 +32,7 @@
     * [Удаление сервера](#delete_reglet)
     * [Список удаленных серверов](#get_removed_reglets)
     * [Восстановление удаленного сервера](#restore_removed)
+    * [Получить VNC-ссылку](#vnc)
 * [Снэпшоты](#snapshots)
   * [Просмотр списка снэпшотов](#get_snapshots)
   * [Создание снэпшота](#snapshot)
@@ -412,6 +413,7 @@ api.ptr(domain='mail.mydomain.ru',
   * [Удаление сервера](#delete_reglet)
   * [Список удаленных серверов](#get_removed_reglets)
   * [Восстановление удаленного сервера](#restore_removed)
+  * [Получить VNC-ссылку](#vnc)
   
 ---
 
@@ -599,6 +601,7 @@ api.create_reglet(size='cloud-1', image='6655', name='Sandbox',
 * [Удаление сервера](#delete_reglet)
 * [Список удаленных серверов](#get_removed_reglets)
 * [Восстановление удаленного сервера](#restore_removed)
+* [Получить VNC-ссылку](#vnc)
 
 **Обязательные аргументы:**
 * `reglet_id` - Идентификатор сервера
@@ -1089,6 +1092,20 @@ api.get_removed_reglets()
 **Пример:**
 ```python
 api.create_reglet(size='start-0', image=123456)
+```
+
+---
+
+#### Получить VNC-ссылку <a name="vnc"></a>
+
+**Функция:**
+```python
+api.get_vnc_url(reglet_id=654321)
+```
+
+**Ответ:**
+```json
+{'vnc': {'link': 'https://node123-msk1.cloudvps.reg.ru/vnc_auto.html?path=?token=fxr6u1xhdvqlwaxchilsmqqhm4n20ck3'}}
 ```
 
 
