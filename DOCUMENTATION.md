@@ -30,6 +30,8 @@
     * [Включение и выключение бекапирования](#enable_disable_backups)
     * [Восстановление из бекапа](#restore)
     * [Удаление сервера](#delete_reglet)
+    * [Список удаленных серверов](#get_removed_reglets)
+    * [Восстановление удаленного сервера](#restore_removed)
 * [Снэпшоты](#snapshots)
   * [Просмотр списка снэпшотов](#get_snapshots)
   * [Создание снэпшота](#snapshot)
@@ -406,9 +408,10 @@ api.ptr(domain='mail.mydomain.ru',
   * [Создание снэпшота](#snapshot)
   * [Включение и выключение сервера](#start_stop)
   * [Включение и выключение бекапирования](#enable_disable_backups)
-  * [Восстановление из бекапа](#restore)
-  * [Переименование сервера](#rename_reglet)
+  * [Восстановление из бекапа](#restore_from_backup)
   * [Удаление сервера](#delete_reglet)
+  * [Список удаленных серверов](#get_removed_reglets)
+  * [Восстановление удаленного сервера](#restore_removed)
   
 ---
 
@@ -594,6 +597,8 @@ api.create_reglet(size='cloud-1', image='6655', name='Sandbox',
 * [Включение и выключение бекапирования](#enable_disable_backups)
 * [Восстановление из бекапа](#restore)
 * [Удаление сервера](#delete_reglet)
+* [Список удаленных серверов](#get_removed_reglets)
+* [Восстановление удаленного сервера](#restore_removed)
 
 **Обязательные аргументы:**
 * `reglet_id` - Идентификатор сервера
@@ -974,7 +979,7 @@ api.actions(reglet_id=6867, action='enable_backups')
 
 ---
 
-#### Восстановление из бекапа <a name="restore"></a>
+#### Восстановление из бекапа <a name="restore_from_backup"></a>
 
 > Описание метода - https://developers.cloudvps.reg.ru/reglets/restore.html
 
@@ -1022,7 +1027,70 @@ api.delete_reglet(reglet_id=6867)
 В случае успеха будет возвращено **булево значение**:
 ```python
 True
+``` 
+
+---
+
+#### Список удаленных серверов <a name="get_removed_reglets"></a>
+
+**Функция:**
+```python
+api.get_removed_reglets()
 ```
+
+**Ответ:**
+```json
+[
+  {
+    'image_id': 123456, 
+    'name': 'Cloud Server', 
+    'reglet_id': 654321, 
+    'remove_date': '2021-05-20 01:58:29', 
+    'remove_reason': 'stopped by client', 
+    'size': {
+      'archived': 0, 
+      'benchmarks': {
+        'geekbench': [{
+            'score': 0, 
+            'version': '4.4.3'
+          }, 
+          {
+            'score': 0, 
+            'version': '5.2.3'
+          }
+        ]
+      }, 
+      'benchmarks_multiplier': 0, 
+      'disk': 5, 
+      'id': 1085, 
+      'memory': 512, 
+      'name': 'Start-0', 
+      'price': '0.32', 
+      'price_month': 215, 
+      'regions': ['msk1'], 
+      'slug': 'start-0', 
+      'vcpus': 1, 
+      'weight': 1
+    }
+  }
+]
+``` 
+
+---
+
+#### Восстановление удаленного сервера <a name="restore_removed"></a>
+
+Восстановление удаленного сервера происходит при помощи той же функции, как и в создании нового сервера - [Создание сервера](#create_reglet).
+
+Но есть отличие - для восстановления сервера нужно указать `size` и `image` удаленного сервера.
+
+В примере ниже возьмем данные из раздела [Список удаленных серверов](#get_removed_reglets).
+
+**Пример:**
+```python
+api.create_reglet(size='start-0', image=123456)
+```
+
 
 ## Снэпшоты <a name="snapshots"></a>
 

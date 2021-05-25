@@ -95,7 +95,7 @@ class CloudAPI(object):
                        'image': image}
 
         if name is not None:
-            data_params['name'] = name
+            data_params['name'] = str(name)
 
         if ssh_keys is not None:
             data_params['ssh_keys'] = ssh_keys
@@ -162,18 +162,6 @@ class CloudAPI(object):
 
     def get_removed_reglets(self):
         data = requests.get(f'{self.api_url}/removed_servers', headers=self.HEADERS).json()
-
-        return data
-
-    def restore_reglet(self, service_id, name, image, size, backups, ssh_keys):
-        JSON = {"service_id": int(service_id),
-                "name": str(name),
-                "image": int(image),
-                "size": str(size),
-                "backups": backups,
-                "ssh_keys": ssh_keys}
-
-        data = requests.post(f'{self.api_url}/reglets', headers=self.HEADERS, json=JSON).json()
 
         return data
 
