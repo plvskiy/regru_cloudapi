@@ -1053,7 +1053,8 @@ api.get_removed_reglets()
     'size': {
       'archived': 0, 
       'benchmarks': {
-        'geekbench': [{
+        'geekbench': [
+          {
             'score': 0, 
             'version': '4.4.3'
           }, 
@@ -1105,7 +1106,11 @@ api.get_vnc_url(reglet_id=654321)
 
 **Ответ:**
 ```json
-{'vnc': {'link': 'https://node123-msk1.cloudvps.reg.ru/vnc_auto.html?path=?token=fxr6u1xhdvqlwaxchilsmqqhm4n20ck3'}}
+{
+  'vnc': {
+    'link': 'https://node123-msk1.cloudvps.reg.ru/vnc_auto.html?path=?token=fxr6u1xhdvqlwaxchilsmqqhm4n20ck3'
+  }
+}
 ```
 
 
