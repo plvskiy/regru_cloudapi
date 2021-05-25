@@ -1045,36 +1045,36 @@ api.get_removed_reglets()
 ```json
 [
   {
-    'image_id': 123456, 
-    'name': 'Cloud Server', 
-    'reglet_id': 654321, 
-    'remove_date': '2021-05-20 01:58:29', 
-    'remove_reason': 'stopped by client', 
-    'size': {
-      'archived': 0, 
-      'benchmarks': {
-        'geekbench': [
+    "image_id": 123456, 
+    "name": "Cloud Server", 
+    "reglet_id": 654321, 
+    "remove_date": "2021-05-20 01:58:29", 
+    "remove_reason": "stopped by client", 
+    "size": {
+      "archived": 0, 
+      "benchmarks": {
+        "geekbench": [
           {
-            'score': 0, 
-            'version': '4.4.3'
+            "score": 0, 
+            "version": "4.4.3"
           }, 
           {
-            'score': 0, 
-            'version': '5.2.3'
+            "score": 0, 
+            "version": "5.2.3"
           }
         ]
       }, 
-      'benchmarks_multiplier': 0, 
-      'disk': 5, 
-      'id': 1085, 
-      'memory': 512, 
-      'name': 'Start-0', 
-      'price': '0.32', 
-      'price_month': 215, 
-      'regions': ['msk1'], 
-      'slug': 'start-0', 
-      'vcpus': 1, 
-      'weight': 1
+      "benchmarks_multiplier": 0, 
+      "disk": 5, 
+      "id": 1085, 
+      "memory": 512, 
+      "name": "Start-0", 
+      "price": "0.32", 
+      "price_month": 215, 
+      "regions": ["msk1"], 
+      "slug": "start-0", 
+      "vcpus": 1, 
+      "weight": 1
     }
   }
 ]
@@ -1107,8 +1107,8 @@ api.get_vnc_url(reglet_id=654321)
 **Ответ:**
 ```json
 {
-  'vnc': {
-    'link': 'https://node123-msk1.cloudvps.reg.ru/vnc_auto.html?path=?token=fxr6u1xhdvqlwaxchilsmqqhm4n20ck3'
+  "vnc": {
+    "link": "https://node123-msk1.cloudvps.reg.ru/vnc_auto.html?path=?token=fxr6u1xhdvqlwaxchilsmqqhm4n20ck3"
   }
 }
 ```
