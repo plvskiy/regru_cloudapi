@@ -14,7 +14,7 @@
   * [Удаление SSH-ключа](#delete_ssh_key)
 * [Изменение PTR](#ptr)
 * [Виртуальные серверы](#vps)
-  * [Просмотр списка серверов](#get_reglets)
+  * [Просмотр списка серверов и просмотр информации о сервере](#get_reglets)
   * [Создание сервера](#create_reglet)
     * [Создание сервера из снэпшота](#create_reglet_snapshot)
   * [Действия с VPS](#actions)
@@ -395,7 +395,7 @@ api.ptr(domain='mail.mydomain.ru',
 
 ## Виртуальные серверы <a name="vps"></a>
 
-* [Просмотр списка серверов](#get_reglets)
+* [Просмотр списка серверов и просмотр информации о сервере](#get_reglets)
 * [Создание сервера](#create_reglet)
   * [Создание сервера из снэпшота](#create_reglet_snapshot)
 * [Действия с VPS](#actions)
@@ -417,11 +417,17 @@ api.ptr(domain='mail.mydomain.ru',
   
 ---
 
-### Просмотр списка серверов <a name="get_reglets"></a>
+### Просмотр списка серверов и просмотр информации о сервере<a name="get_reglets"></a>
 
-> Описание метода - https://developers.cloudvps.reg.ru/reglets/list.html
+**Описание методов:**
+> Просмотр списка серверов - https://developers.cloudvps.reg.ru/reglets/list.html
 
-**Функция:**
+> Просмотр информации о сервере - https://developers.cloudvps.reg.ru/reglets/info.html
+
+**Аргументы:**
+* `reglet_id` (**_Опциональный_**) - Уникальный идентификатор сервера
+
+**Функция для просмотра списка серверов**:
 ```python
 api.get_reglets()
 ```
@@ -479,6 +485,62 @@ api.get_reglets()
             "vcpus": 1
         }
     ]
+}
+```
+
+**Функция для просмотра информации о сервере**:
+```python
+api.get_reglets(reglet_id=6891)
+```
+
+**Ответ:**
+```json
+{
+    "reglet": {
+        "archived_at": null,
+        "created_at": "2018-07-12 02:40:27",
+        "disk": 10,
+        "disk_usage": 6.7,
+        "hostname": "193-124-206-121.cloudvps.regruhosting.ru",
+        "id": 6891,
+        "image": {
+            "created_at": "2017-10-31 10:55:48",
+            "distribution": "ubuntu-16.04",
+            "id": 3459,
+            "min_disk_size": "10",
+            "name": "Ubuntu 16.04 LTS",
+            "private": 0,
+            "region_slug":"msk1",
+            "size_gigabytes": "2.4",
+            "slug": "ubuntu-16-04-amd64",
+            "type": "distribution"
+        },
+        "image_id": 3459,
+        "ip": "193.124.206.121",
+        "ipv6": "2a00:f40:2:4:2::1",
+        "locked": 0,
+        "memory": 512,
+        "name": "VNC",
+        "ptr":"193-124-206-121.cloudvps.regruhosting.ru",
+        "region_slug": "msk1",
+        "service_id": 31386957,
+        "size": {
+            "archived":0,
+            "disk": 10,
+            "id": 5,
+            "memory": 512,
+            "name": "Cloud-1",
+            "price":"0.00000",
+            "price_month":"0.00000",
+            "slug": "cloud-1",
+            "vcpus": 1,
+            "weight": 10
+        },
+        "size_slug": "cloud-1",
+        "status": "active",
+        "sub_status": null,
+        "vcpus": 1
+    }
 }
 ```
 

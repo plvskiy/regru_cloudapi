@@ -84,15 +84,20 @@ class CloudAPI(object):
 
         return check_data
 
-    def get_reglets(self):
-        data = requests.get(f'{self.api_url}/reglets', headers=self.HEADERS).json()
+    def get_reglets(self, reglet_id=None):
+        url = f'{self.api_url}/reglets'
+
+        if reglet_id is not None:
+            url += f'/{reglet_id}'
+
+        data = requests.get(url, headers=self.HEADERS).json()
         check_data = Errors(data).check_error()
 
         return check_data
 
     def create_reglet(self, size, image, name=None, ssh_keys=None, backups=None):
-        data_params = {'size': size,
-                       'image': image}
+        data_params = {'size': str(size),
+                       'image': str(image)}
 
         if name is not None:
             data_params['name'] = str(name)
