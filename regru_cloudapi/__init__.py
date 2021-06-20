@@ -95,18 +95,18 @@ class CloudAPI(object):
 
         return check_data
 
-    def create_reglet(self, size, image, name=None, ssh_keys=None, backups=None):
+    def create_reglet(self, size, image, name=None, isp_license_size=None, ssh_keys=None, backups=None):
         data_params = {'size': str(size),
                        'image': str(image)}
 
         if name is not None:
             data_params['name'] = str(name)
-
         if ssh_keys is not None:
             data_params['ssh_keys'] = ssh_keys
-
         if backups is not None:
             data_params['backups'] = backups
+        if isp_license_size is not None:
+            data_params['isp_license_size'] = isp_license_size
 
         data = requests.post(f'{self.api_url}/reglets',
                              headers=self.HEADERS, data=json.dumps(data_params)).json()
@@ -114,7 +114,7 @@ class CloudAPI(object):
 
         return check_data
 
-    def actions(self, reglet_id, action, size=None, image=None, offline=None, name=None):
+    def actions(self, reglet_id, action, size=None, image=None, offline=None, name=None, isp_license_size=None):
         Errors(parameter=action).check_actions()
 
         data_params = {'type': action}
@@ -135,6 +135,11 @@ class CloudAPI(object):
 
             if name is not None:
                 data_params['name'] = name
+        elif action == 'resize_isp_license':
+            if isp_license_size is not None:
+                data_params['isp_license_size'] = isp_license_size
+            else:
+                raise ValueError('Значение isp_license_size не может быть None')
 
         data = requests.post(f'{self.api_url}/reglets/{reglet_id}/actions',
                              headers=self.HEADERS, data=json.dumps(data_params)).json()

@@ -21,6 +21,7 @@
     * [Перезагрузка сервера](#reboot)
     * [Переименование сервера](#rename_reglet)
     * [Смена тарифа](#resize)
+    * [Смена тарифа лицензии ISPmanager](#isp_license)
     * [Сброс root-пароля](#password_reset)
     * [Переустановка системы](#rebuild)
       * [Переустановка сервера из снэпшота](#rebuild_snapshot)
@@ -402,6 +403,7 @@ api.ptr(domain='mail.mydomain.ru',
   * [Перезагрузка сервера](#reboot)
   * [Переименование сервера](#rename_reglet)
   * [Смена тарифа](#resize)
+  * [Смена тарифа лицензии ISPmanager](#isp_license)
   * [Сброс root-пароля](#password_reset)
   * [Переустановка системы](#rebuild)
     * [Переустановка сервера из снэпшота](#rebuild_snapshot)
@@ -556,6 +558,7 @@ api.get_reglets(reglet_id=6891)
 * `image` (**_Обязательный_**) - Уникальный идентификатор образа, т.е. `slug` 
   (см. [Образы](https://developers.cloudvps.reg.ru/images/index.html#images))
 * `name` (**_Опциональный_**) - Имя сервера, может быть автоматически сгенерировано
+* `isp_license_size` (**_Опциональный_**) - тариф ISPManager для заказа
 * `ssh_keys` (**_Опциональный_**) - Массив с идентификаторами загруженных SSH-ключей
 * `backups` (**_Опциональный_**) - Включить бэкапирование `true`
   (см. [Бэкапирование сервера](https://developers.cloudvps.reg.ru/reglets/switch_backups.html#reglets-backups))
@@ -652,6 +655,7 @@ api.create_reglet(size='cloud-1', image='6655', name='Sandbox',
 * [Перезагрузка сервера](#reboot)
 * [Переименование сервера](#rename_reglet)
 * [Смена тарифа](#resize)
+* [Смена тарифа лицензии ISPmanager](#isp_license)
 * [Сброс root-пароля](#password_reset)
 * [Переустановка системы](#rebuild)
   * [Переустановка сервера из снэпшота](#rebuild_snapshot)
@@ -681,6 +685,7 @@ api.create_reglet(size='cloud-1', image='6655', name='Sandbox',
 * `name`:
   * **_Опциональный_** для `clone` - Имя клона
   * **_Обязательный_** для `snapshot` - Имя снэпшота, не обязано быть уникальным
+* `isp_license_size` (**_Обязательный_** для `resize_isp_license`) - тариф ISPmanager
 
 **Типы действий:**
 * `reboot` - Перезагрузка сервера
@@ -694,6 +699,7 @@ api.create_reglet(size='cloud-1', image='6655', name='Sandbox',
 * `restore` - Восстановление из бекапа
 * `clone` - Клонирование сервера
 * `snapshot` - Создание снэпшота
+* `resize_isp_license` - Смена тарифа лицензии ISPmanager
 
 **Функция:**
 ```python
@@ -822,6 +828,38 @@ api.actions(reglet_id=6867, action='resize', size='cloud-4')
         "started_at": "2018-07-12 01:43:16",
         "status": "in-progress",
         "type": "resize"
+    }
+}
+```
+
+---
+
+#### Смена тарифа лицензии ISPmanager <a name="isp_license"></a>
+
+> Описание метода - https://developers.cloudvps.reg.ru/reglets/isp_license.html
+
+**Аргументы:**
+* `reglet_id` - Идентификатор сервера
+* `action` (`resize_isp_license`) - Тип действия
+* `isp_license_size` - тариф ISPmanager
+
+**Функция:**
+```python
+api.actions(reglet_id=6891, action='resize', isp_license_size='isp_pro6')
+```
+
+**Ответ:**
+```json
+{
+    "action": {
+        "completed_at": "2018-07-18 00:15:20",
+        "id": 121237,
+        "region_slug": "msk1",
+        "resource_id": 6891,
+        "resource_type": "reglet",
+        "started_at": "2018-07-18 00:15:19",
+        "status": "in-progress",
+        "type": "isp_license_size"
     }
 }
 ```

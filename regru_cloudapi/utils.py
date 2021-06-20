@@ -71,7 +71,7 @@ class Errors(object):
 
     def check_actions(self):
         params = ['reboot', 'password_reset', 'start', 'stop', 'enable_backups', 'disable_backups', 'resize',
-                  'rebuild', 'restore', 'clone', 'snapshot', 'generate_vnc_link']
+                  'rebuild', 'restore', 'clone', 'snapshot', 'generate_vnc_link', 'resize_isp_license']
 
         if self.parameter not in params:
             raise KeyError(f'Такой тип операции отсутствует. Используй одно из значений: {*params, }')
