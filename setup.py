@@ -12,9 +12,10 @@ def read(filename):
 setup(
     name='regru_cloudapi',
     description='Reg.ru CloudAPI Python library',
-    version='1.2.11',
+    version='1.2.12',
     url='https://github.com/plvskiy/regru_cloudapi',
     author='Matthew Polovskiy',
+    author_email='github@plvskiy.ru',
     packages=find_packages(),
     python_requires='>=3.6',
     long_description=read('README.md'),
@@ -22,7 +23,8 @@ setup(
     license='MIT',
 
     classifiers=['Programming Language :: Python :: 3',
-                 'License :: OSI Approved :: MIT License']
+                 'License :: OSI Approved :: MIT License'
+                 ]
 )
 
 

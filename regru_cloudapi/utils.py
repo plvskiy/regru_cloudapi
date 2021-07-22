@@ -28,7 +28,9 @@ class Errors(object):
         elif 'code' in self.data:
             code = self.data['code']
 
-            if 'IP_NOT_FOUND' in code:
+            if code == 401:
+                raise ValueError('Ключ API неверный. Проверь ключ API в Личном Кабинете Reg.ru услуги Облачные сервера')
+            elif 'IP_NOT_FOUND' in code:
                 raise ValueError('Такой IP-адрес не найден')
             elif 'NO_SUCH_REGLET' in code:
                 raise ValueError('Такой сервер отсутствует')
@@ -78,15 +80,21 @@ class Errors(object):
 
     def check_ssh_key(self):
         if 'detail' in self.data:
-            if 'does not match' in self.data['detail']:
-                if 'name' in self.data['detail']:
+            detail = self.data['detail']
+
+            if 'does not match' in detail:
+                if 'name' in detail:
                     raise ValueError('Неверное имя ключа')
-                elif 'public_key' in self.data['detail']:
+                elif 'public_key' in detail:
                     raise ValueError('Предоставленный SSH-ключ неверен')
         elif 'code' in self.data:
-            if self.data['code'] == 'SSH_KEY_ALREADY_EXIST':
+            code = self.data['code']
+
+            if code == 'SSH_KEY_ALREADY_EXIST':
                 raise ValueError(f'Предоставленный SSH-ключ уже существует: {self.data}')
-            elif self.data['code'] == 'SSH_KEY_DOES_NOT_EXIST':
+            elif code == 'SSH_KEY_DOES_NOT_EXIST':
                 raise KeyError(f'SSH-ключ с этим id не существует: {self.data}')
+            else:
+                return Errors(self.data).check_error()
         else:
             return Errors(self.data).check_error()
