@@ -3,6 +3,7 @@
 ![PyPI](https://img.shields.io/pypi/v/regru_cloudapi?style=plastic)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/regru_cloudapi)
 ![GitHub](https://img.shields.io/github/license/plvskiy/regru_cloudapi)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 
 <p align="center"> Неофициальная библиотека для работы с API услуги <a href="https://reg.ru">Reg.ru</a> Облачные VPS.
